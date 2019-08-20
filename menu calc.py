@@ -55,13 +55,3 @@ while True:
     
     if finish == 'yes':
         break
-
-
-
-
-
-
-
-
-
-
