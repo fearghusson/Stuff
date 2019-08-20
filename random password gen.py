@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 29 19:59:03 2019
-
-@author: Fearghusson
-"""
-
 import random
 
 letters = {1: 'a', 2: 'b', 3: 'c', 4:'d', 5:'e', 6:'f', 7:'g',8:'h', 9:'g',
