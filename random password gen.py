@@ -1,4 +1,9 @@
 def randpass(letter = 7, number = 1, case = 1, special = 1):
+    '''this function will create a random password containing 7 letters,
+    1 number, 1 upper case letter, and one special character by default.
+    to change the number of elements created in the password change the 
+    default values in the function'''
+    
     import random
     
     letters = {1: 'a', 2: 'b', 3: 'c', 4:'d', 5:'e', 6:'f', 7:'g',8:'h', 9:'g',
