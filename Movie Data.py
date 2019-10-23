@@ -1,11 +1,12 @@
+import pandas as pd
+import requests
+
 def getmovie(movietitle, year = None):
     #this will get a list of elements from the json data
    
     #blank values
     boxoffice_string = ''
     listvalue = []
-    #importing the package
-    import requests
    
     #if statement to determine if year is used
     if year == None:
@@ -35,9 +36,44 @@ def getmovie(movietitle, year = None):
         listvalue = [json_data['Title'], boxoffice_int, int(json_data['Metascore']),
                  int(json_data['Year'])]
     else:
-        listvalue = [json_data['Title'], 'N/A', int(json_data['Metascore']),
+        listvalue = [json_data['Title'], 0, int(json_data['Metascore']),
                  int(json_data['Year'])]
         #returns the value
     return listvalue
 
-print(getmovie('batman'))
+#blank lists to be filled out later to create each column of the dataframe
+title_list = []
+boxoffice_list = []
+rating = []
+year = []
+
+def createlists(listvalue):
+    #appends the list values
+    title_list.append(listvalue[0])
+    boxoffice_list.append(listvalue[1])
+    rating.append(listvalue[2])
+    year.append(listvalue[3])
+
+def fillout(allmovies):
+    #this function loops over the all the movies and appends each of the blank lists
+    for i in allmovies:
+        listmovie = getmovie(i)
+        createlists(listmovie)
+        
+#list of the actual movie titles to be searched
+movie_titles =  ['batman', 'spider-man']
+
+#running the function to fill out all the series
+fillout(movie_titles)
+
+title_series = pd.Series(title_list)
+boxoffice_series = pd.Series(boxoffice_list)
+rating_series = pd.Series(rating)
+year_series = pd.Series(year)
+
+#create a dictionary for the dataframe
+frame = {'Title': title_series, 'BoxOffice':boxoffice_series, 'Rating': rating_series, 'Year':year_series }
+        
+df = pd.DataFrame(frame)
+
+print(df)
