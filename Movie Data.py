@@ -101,3 +101,29 @@ plt.title('Rating to BoxOffice')
 plt.xlabel('Rating')
 plt.ylabel('BoxOffice')
 plt.show()
+
+
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+x = df_final.iloc[:, 2].values.reshape(-1,1)
+y = df_final.iloc[:,1].values.reshape(-1, 1)
+
+linear_regressor = LinearRegression()
+linear_regressor.fit(x, y)
+Y_pred = linear_regressor.predict(x)
+
+
+plt.scatter(x, y)
+plt.plot(x, Y_pred, color='red')
+plt.show()
+
+
+
+import statsmodels.formula.api as sm
+
+result = sm.ols(formula="BoxOffice ~ Rating", data = df_final).fit()
+
+print(result.params)
+
+print(result.summary())
