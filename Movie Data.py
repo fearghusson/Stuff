@@ -2,6 +2,8 @@ import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 
+movie_file = r"C:\Users\mferguson018\Desktop\movie_list.csv"
+
 def getmovie(movietitle, year = None):
     #this will get a list of elements from the json data
     try:
@@ -71,7 +73,7 @@ def fillout(allmovies, num = 10):
         
 #list of the actual movie titles to be searched
 movie_titles = []
-csv_movie = pd.read_csv(r"C:\Users\mferguson018\Desktop\movie_list.csv")
+csv_movie = pd.read_csv(movie_file)
 titles_from_csv = csv_movie['movie_title'].tolist()
 
 for i in range(250):
@@ -91,8 +93,7 @@ df = pd.DataFrame(frame)
 df_filter_series = df['BoxOffice'] != 0
 df_final = df[df_filter_series]
 
-print(df_final)
-
+print(df_final.head())
 df_final.describe()
 
 df_final.plot(x='Rating', y='BoxOffice', style = 'o')
