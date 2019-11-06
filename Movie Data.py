@@ -42,7 +42,7 @@ def getmovie(movietitle, year = None):
                 
         return listvalue
     
-    except ValueError:
+    except (ValueError, KeyError) :
        print('error - ' + movietitle + ' may not be the correct title')
     
     return listvalue
@@ -71,8 +71,8 @@ def fillout(allmovies, num = 10):
         
 #list of the actual movie titles to be searched
 movie_titles = []
-csv_movie = pd.read_csv(r"C:\Users\Fearghusson\Desktop\Movies.csv")
-titles_from_csv = csv_movie['title'].tolist()
+csv_movie = pd.read_csv(r"C:\Users\mferguson018\Desktop\movie_list.csv")
+titles_from_csv = csv_movie['movie_title'].tolist()
 
 for i in range(250):
     movie_titles.append(titles_from_csv[i])
