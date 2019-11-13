@@ -1,8 +1,11 @@
 import requests
 import datetime
 
+today = datetime.date.today()
+yesterday = today - datetime.timedelta(days = 1)
+
 def search_news_today(search_term, max_results = 5):
-    url = r"https://newsapi.org/v2/everything?q="+search_term+"&from="+str(datetime.date.today())+"&to="+str(datetime.date.today())+"&sortBy=popularity&pageSize="+str(max_results)+"&apiKey=88b2fe182ea34f34a58b9e67a835695f"
+    url = r"https://newsapi.org/v2/everything?q="+search_term+"&from="+str(yesterday)+"&to="+str(today)+"&sortBy=popularity&pageSize="+str(max_results)+"&apiKey=88b2fe182ea34f34a58b9e67a835695f"
     response = requests.get(url)
     json_data = response.json()
     just_articles = json_data['articles']
@@ -38,3 +41,6 @@ else:
     print('what do you want to search?')
     question2 = input()
     search_news_today(question2)
+
+
+search_news_today('bolton')
