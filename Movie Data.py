@@ -1,10 +1,21 @@
+'''superhero regression project 
+the idea is to see to what extent rating has on boxoffice from 2007 to 2019'''
+
 import pandas as pd
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
 import requests
-import matplotlib.pyplot as plt
+import csv
+#the location of the movie list
+file = r"C:\Users\mferguson018\Desktop\movielist.csv"
+#This is to get the list of movies from the CSV file
+with open(file) as csvfile:
+    readCSV = csv.reader(csvfile)
+    movielist = []
+    for row in readCSV:
+        movielist.append(row[0])
 
-movie_file = r"C:\Users\mferguson018\Desktop\movie_list.csv"
-
-def getmovie(movietitle, year = None):
+def getmovie(title, year = None):
     #this will get a list of elements from the json data
     try:
         #blank values that are used to fill out info
@@ -13,9 +24,9 @@ def getmovie(movietitle, year = None):
    
         #if statement to determine if year is used
         if year == None:
-            url = 'http://www.omdbapi.com/?apikey=d42d26d9&' + 't=' + movietitle
+            url = 'http://www.omdbapi.com/?apikey=d42d26d9&t=' + str(title)
         else:
-            url =  'http://www.omdbapi.com/?apikey=d42d26d9&' + 't=' + movietitle + '&y=' +str(year)
+            url =  'http://www.omdbapi.com/?apikey=d42d26d9&t=' + str(title) + '&y=' +str(year)
    
         #requesting info from omdb and storing it to r
         r = requests.get(url)
@@ -45,9 +56,9 @@ def getmovie(movietitle, year = None):
         return listvalue
     
     except (ValueError, KeyError) :
-       print('error - ' + movietitle + ' may not be the correct title')
+       print('error - ' + title + ' may not be the correct title')
     
-    return listvalue
+    #return listvalue
 
 #blank lists to be filled out later to create each column of the dataframe
 title_list = []
@@ -55,6 +66,7 @@ boxoffice_list = []
 rating = []
 year = []
 
+#def function to append the list from getmovie into 4 different lists
 def createlists(listvalue):
     try:
         #appends the list values
@@ -62,68 +74,49 @@ def createlists(listvalue):
         boxoffice_list.append(listvalue[1])
         rating.append(listvalue[2])
         year.append(listvalue[3])
-    except IndexError:
+    except (IndexError,TypeError):
         print('missing value')
         
-def fillout(allmovies, num = 10):
+#Combo of createlist and getmovie functions        
+def fillout(movielist, num = len(movielist)):
     #this function loops over the all the movies and appends each of the blank lists
     for i in range(num):
-        createlists(getmovie(allmovies[i]))
+        createlists(getmovie(movielist[i]))
         
-        
-#list of the actual movie titles to be searched
-movie_titles = []
-csv_movie = pd.read_csv(movie_file)
-titles_from_csv = csv_movie['movie_title'].tolist()
-
-for i in range(250):
-    movie_titles.append(titles_from_csv[i])
-
 #running the function to fill out all the series
-fillout(movie_titles, num = 100)
-#creating the series for 
-title_series = pd.Series(title_list)
-boxoffice_series = pd.Series(boxoffice_list)
-rating_series = pd.Series(rating)
-year_series = pd.Series(year)
-#create a dictionary for the dataframe
-frame = {'Title': title_series, 'BoxOffice':boxoffice_series, 'Rating': rating_series, 'Year':year_series }
-#here we remove the lines that have N/A from the df into a new df   
-df = pd.DataFrame(frame)
-df_filter_series = df['BoxOffice'] != 0
-df_final = df[df_filter_series]
+fillout(movielist)
+#defining the basic frame of the dataframe from a dictionary
+frame = {'Title': title_list, 'BoxOffice':boxoffice_list, 'Rating': rating, 'Year':year}
 
-print(df_final.head())
-df_final.describe()
+allmovie_df = pd.DataFrame(frame)
 
-df_final.plot(x='Rating', y='BoxOffice', style = 'o')
-plt.title('Rating to BoxOffice')
-plt.xlabel('Rating')
-plt.ylabel('BoxOffice')
-plt.show()
+#filtering to get rid of values that are 0 for box office
+filter_value = allmovie_df['BoxOffice'] != 0
+#final dataframe for all the movies and ratings
+final_movie_df = allmovie_df[filter_value]
 
-
-import numpy as np
-from sklearn.linear_model import LinearRegression
-
-x = df_final.iloc[:, 2].values.reshape(-1,1)
-y = df_final.iloc[:,1].values.reshape(-1, 1)
-
-linear_regressor = LinearRegression()
-linear_regressor.fit(x, y)
-Y_pred = linear_regressor.predict(x)
-
-
-plt.scatter(x, y)
-plt.plot(x, Y_pred, color='red')
-plt.show()
+#the basic OLS regression
+results = smf.ols('BoxOffice ~ Rating', data=final_movie_df).fit()
+print(results.summary())
 
 
 
-import statsmodels.formula.api as sm
 
-result = sm.ols(formula="BoxOffice ~ Rating", data = df_final).fit()
 
-print(result.params)
 
-print(result.summary())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
